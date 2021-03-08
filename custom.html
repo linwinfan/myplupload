@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+
+<title>Plupload - Custom example</title>
+
+<!-- production
+<script type="text/javascript" src="plupload.full.min.js"></script> 
+-->
+
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="jquery.dialog.js"></script>
+<script type="text/javascript" src="common.js"></script>
+<!-- debug -->
+<script type="text/javascript" src="moxie.js"></script>
+<script type="text/javascript" src="plupload.dev.js"></script>
+
+<script type="text/javascript" src="jquery.plupload.queue.js"></script>
+<link rel="stylesheet" type="text/css" href="plupload.queue.css"/>
+</head>
+<body style="font: 13px Verdana; background: #eee; color: #333">
+
+<h1>示例</h1>
+<div class="controls" id="td_ATTACH_LIST"> 
+	<input type="text" id="ATTACH_LIST" name="ATTACH_LIST" title="" value=""  class="inputTxt "  style="width: 135px;"  data-validator=""  />
+<span id="single_upload_container" style="width: 130px;margin-left: 10px;" ></span>
+		  </div>
+<pre id="console"></pre>
+
+
+<script type="text/javascript">
+
+function initFileUpload(){ 
+
+			
+    $('#ATTACH_LIST').upload( {
+         url :"upload.php"  ,  //处理上传服务的地址
+         max_file_size : '100mb',  //规定上传文件大小上限
+         render_container:'#single_upload_container',  //渲染容器
+         max_file_num:5 ,
+         onAllComplete:function(resp){
+         //批量上传处理路径 addby wuhua 2014/5/4
+	    	var filePath='';
+	    	var fileId='';
+	    	$.each(resp,function(index,respObj){
+	    		filePath += respObj.filePath+",";
+	    		fileId += respObj.cacheId+",";
+	    	})
+	    	if(filePath.length>0)filePath = filePath.substring(0,(filePath.length-1));
+	    	if(fileId.length>0)fileId = fileId.substring(0,(fileId.length-1));
+	    	 
+	    	$("#filePath").val(filePath);
+	    	$("#fileId").val(fileId);
+	    	
+         },
+        uploadBefore:function(fileNum){
+     	     //上传文件前执行的事件
+    	     if($("#filePath").val()!=''){
+    		return "只能上传一个文件";
+    	     }
+		if(fileNum>=2){ 
+			return "只能上传一个文件";
+		}
+		return null;
+	 }, 
+     delAction:function(fileId){  
+         
+	 	$("#filePath").val('');
+		return true;
+	 } 
+   });   
+}
+
+// Custom example logic
+initFileUpload();
+
+</script>
+</body>
+</html>
